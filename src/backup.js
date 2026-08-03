@@ -16,12 +16,14 @@ import { randomBytes } from 'node:crypto';
 import {
   copyFileSync,
   existsSync,
+  lstatSync,
   mkdirSync,
   mkdtempSync,
   readdirSync,
   readFileSync,
   rmSync,
   statSync,
+  unlinkSync,
   writeFileSync,
 } from 'node:fs';
 import { tmpdir } from 'node:os';
@@ -187,13 +189,47 @@ function isZipArchive(filePath, originalName) {
   }
 }
 
-/** Write extracted zip paths under destRoot (paths already zip-slip safe). */
+/**
+ * Write extracted zip paths under destRoot (paths already zip-slip safe).
+ *
+ * Classic WikiFlip ZIPs often include empty directory markers (e.g. `pages/.site`
+ * with no trailing slash). If those are written as files first, later
+ * `mkdir(.../.site)` for real files fails with EEXIST.
+ */
 function materializeZipEntries(entries, destRoot) {
+  const paths = [...entries.keys()];
+
   for (const [rel, data] of entries) {
+    // Empty entry that is a prefix of another path = directory placeholder.
+    if (
+      data.length === 0 &&
+      paths.some((other) => other !== rel && other.startsWith(`${rel}/`))
+    ) {
+      continue;
+    }
+
     const target = path.join(destRoot, ...rel.split('/'));
-    mkdirSync(path.dirname(target), { recursive: true });
+    ensureDir(path.dirname(target));
+
+    // If a directory marker was already written as a file, replace it.
+    if (existsSync(target)) {
+      const st = lstatSync(target);
+      if (st.isDirectory()) continue;
+      unlinkSync(target);
+    }
+
     writeFileSync(target, data);
   }
+}
+
+/** mkdir -p, but replace a blocking file left by a ZIP directory marker. */
+function ensureDir(dir) {
+  if (existsSync(dir)) {
+    const st = lstatSync(dir);
+    if (st.isDirectory()) return;
+    unlinkSync(dir);
+  }
+  mkdirSync(dir, { recursive: true });
 }
 
 function isSqliteFile(filePath) {

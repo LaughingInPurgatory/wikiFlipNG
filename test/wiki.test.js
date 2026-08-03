@@ -589,11 +589,13 @@ test('backup export/import round-trips pages and accepts classic zip backups', a
   rmSync(archive, { force: true });
 
   // Classic PHP-style pages/ tree inside a ZIP (original WikiFlip layout).
+  // Include an empty directory marker the way many ZIP tools write `.site`.
   const classicZip = pathMod.join(tmpdir(), `classic-${process.pid}.zip`);
   writeFileSync(
     classicZip,
     createZip({
       'wikiflip-backup/manifest.json': `${JSON.stringify({ format: 'wikiflip-content-backup', version: 1 })}\n`,
+      'wikiflip-backup/pages/.site': Buffer.alloc(0),
       'wikiflip-backup/pages/imported-guide/content.md':
         '# Imported Guide\n\nFrom a classic WikiFlip backup.\n',
       'wikiflip-backup/pages/.site/settings.json': JSON.stringify({ site_title: 'Classic Restored' }),

@@ -115,6 +115,8 @@ export function extractZip(buffer) {
     const nameLen = buf.readUInt16LE(cdOffset + 28);
     const extraLen = buf.readUInt16LE(cdOffset + 30);
     const commentLen = buf.readUInt16LE(cdOffset + 32);
+    // external file attributes: high 16 bits are Unix mode when made-by is Unix
+    const externalAttrs = buf.readUInt32LE(cdOffset + 38);
     const localOffset = buf.readUInt32LE(cdOffset + 42);
     const name = buf.subarray(cdOffset + 46, cdOffset + 46 + nameLen).toString('utf8');
     const safeName = normalizeZipPath(name);
@@ -122,6 +124,9 @@ export function extractZip(buffer) {
     cdOffset += 46 + nameLen + extraLen + commentLen;
 
     if (!safeName || safeName.endsWith('/')) continue;
+    // Unix directory bit (S_IFDIR = 0040000) in the high half of external attrs
+    const unixMode = (externalAttrs >>> 16) & 0xffff;
+    if (unixMode && (unixMode & 0o170000) === 0o040000) continue;
 
     if (localOffset + 30 > buf.length || buf.readUInt32LE(localOffset) !== SIG_LOCAL) {
       throw new Error(`Corrupt ZIP local header for ${safeName}.`);
