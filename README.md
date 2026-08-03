@@ -279,6 +279,7 @@ Two deliberate feature changes:
 ```text
 wikiFlipNG/
 ├── Dockerfile
+├── docker/entrypoint.sh      # Fixes volume ownership, then runs as node
 ├── docker-compose.yaml
 ├── docker-compose.build.yaml
 ├── .github/workflows/docker.yml
