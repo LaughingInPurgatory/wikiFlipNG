@@ -1,4 +1,9 @@
 # WikiFlip NG
+<a href="https://ko-fi.com/laughinginpurgatory" target="_blank" rel="noopener">
+  <img align="right" height="36" src="https://storage.ko-fi.com/cdn/kofi2.png?v=3" alt="Support me on Ko-fi" />
+</a>
+
+**Please support me on Kofi, every bit helps!**
 
 WikiFlip NG is a small Markdown wiki for home labs, private networks, and local
 projects. It is the same kind of site as the original PHP

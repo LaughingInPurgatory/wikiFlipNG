@@ -1,0 +1,87 @@
+# Keep only the current GHCR image: delete older package versions.
+# Runs after Docker publishes, and can be triggered manually.
+name: Prune GHCR images
+
+on:
+  workflow_run:
+    workflows: [Docker]
+    types: [completed]
+  workflow_dispatch:
+
+permissions:
+  packages: write
+  contents: read
+
+jobs:
+  prune:
+    name: Keep only latest
+    if: >-
+      github.event_name == 'workflow_dispatch' ||
+      (github.event.workflow_run.conclusion == 'success' &&
+       github.event.workflow_run.head_branch == 'main')
+    runs-on: ubuntu-latest
+    steps:
+      - name: Delete old package versions (keep latest tag + newest untagged)
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          OWNER: ${{ github.repository_owner }}
+          # Package name is the repo name lowercased for GHCR
+          PACKAGE: ${{ github.event.repository.name }}
+        run: |
+          set -euo pipefail
+          PKG=$(echo "$PACKAGE" | tr '[:upper:]' '[:lower:]')
+          OWNER_LC=$(echo "$OWNER" | tr '[:upper:]' '[:lower:]')
+          echo "Pruning container package: ${OWNER_LC}/${PKG}"
+
+          # List versions (newest first)
+          versions=$(gh api \
+            -H "Accept: application/vnd.github+json" \
+            "/users/${OWNER}/packages/container/${PKG}/versions?per_page=100" \
+            --jq '.[] | [.id, (.metadata.container.tags | join(",")), .name, .created_at] | @tsv')
+
+          if [ -z "$versions" ]; then
+            echo "No versions found (or package missing)."
+            exit 0
+          fi
+
+          echo "Current versions:"
+          echo "$versions"
+
+          keep_ids=""
+          # Keep every version that has the "latest" tag
+          while IFS=$'\t' read -r id tags name created; do
+            case ",$tags," in
+              *,latest,*) keep_ids="$keep_ids $id" ;;
+            esac
+          done <<EOF
+          $versions
+          EOF
+
+          # If nothing is tagged latest, keep the single newest version
+          if [ -z "$(echo "$keep_ids" | tr -d ' ')" ]; then
+            newest=$(echo "$versions" | head -n1 | cut -f1)
+            keep_ids=" $newest"
+            echo "No 'latest' tag found; keeping newest version id=$newest"
+          fi
+
+          echo "Keeping version id(s):$keep_ids"
+
+          deleted=0
+          while IFS=$'\t' read -r id tags name created; do
+            case " $keep_ids " in
+              *" $id "*)
+                echo "KEEP  $id  tags=[$tags]  $created"
+                ;;
+              *)
+                echo "DELETE $id  tags=[$tags]  $created"
+                gh api --method DELETE \
+                  -H "Accept: application/vnd.github+json" \
+                  "/users/${OWNER}/packages/container/${PKG}/versions/${id}"
+                deleted=$((deleted + 1))
+                ;;
+            esac
+          done <<EOF
+          $versions
+          EOF
+
+          echo "Deleted $deleted old version(s)."
