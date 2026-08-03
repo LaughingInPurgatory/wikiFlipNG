@@ -1,0 +1,40 @@
+# WikiFlip NG
+#
+#   docker compose up -d
+#   open http://localhost:8080/
+#
+# Leave WIKIFLIP_ADMIN_PASSWORD unset on the first run and the app generates a
+# password and prints it once:
+#
+#   docker compose logs wiki | grep -A 2 Generated
+#
+# Set WIKIFLIP_ADMIN_PASSWORD_HASH (npm run hash-password) to keep the password
+# out of the environment entirely.
+#
+# Pulls the published image by default. To build from this directory instead:
+#
+#   docker compose -f docker-compose.yaml -f docker-compose.build.yaml up -d --build
+
+services:
+  wiki:
+    image: ghcr.io/laughinginpurgatory/wikiflipng:latest
+    container_name: wikiflip-ng
+    ports:
+      - "8080:3000"
+    environment:
+      WIKIFLIP_ADMIN_USER: admin
+      # WIKIFLIP_ADMIN_PASSWORD: change-me-at-least-8-chars
+      # WIKIFLIP_ADMIN_PASSWORD_HASH: scrypt$...
+      # Behind a TLS proxy, so secure cookies and client IPs work:
+      # TRUST_PROXY: "1"
+    volumes:
+      - wiki_data:/app/data
+    restart: unless-stopped
+    read_only: true
+    tmpfs:
+      - /tmp
+    security_opt:
+      - no-new-privileges:true
+
+volumes:
+  wiki_data:

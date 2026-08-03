@@ -1,0 +1,9 @@
+# Overlay: build the image from this repository instead of pulling GHCR.
+#
+#   docker compose -f docker-compose.yaml -f docker-compose.build.yaml up -d --build
+
+services:
+  wiki:
+    build: .
+    image: wikiflip-ng:local
+    pull_policy: build

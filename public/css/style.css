@@ -1,0 +1,2324 @@
+/**
+ * WikiFlip theme — glassmorphic deep-indigo
+ *
+ * Drop into wikiFlip as assets/css/style.css (or link from the theme pack).
+ * Shares the same palette as styles-custom.css (indigo glass base).
+ *
+ * @package deep-indigo-glass-themes
+ * @see styles-custom.css for the design source of truth
+ */
+
+:root {
+  --bg1: #0f1021;
+  --bg2: #1a1c3a;
+  --card: rgba(28, 30, 58, 0.6);
+  --panel: rgba(18, 20, 42, 0.75);
+  --border: rgba(255, 255, 255, 0.08);
+  --border-strong: rgba(255, 255, 255, 0.14);
+  --text: #e7e9ff;
+  --muted: #8b8fc7;
+  --accent: #7c8cff;
+  --accent-2: #56d0c9;
+  --hover: rgba(124, 140, 255, 0.12);
+  --danger: #ff6b8a;
+  --font: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+  --mono: "SFMono-Regular", "Courier New", monospace;
+  --sidebar-w: 260px;
+  --inset: 12px;
+  --radius: 18px;
+}
+
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+
+html {
+  height: 100%;
+}
+
+body {
+  margin: 0;
+  min-height: 100%;
+  color: var(--text);
+  font-family: var(--font);
+  line-height: 1.65;
+  background:
+    radial-gradient(1200px 800px at 15% -10%, #2a1f5233 0%, transparent 60%),
+    radial-gradient(1000px 700px at 110% 10%, #14484a33 0%, transparent 55%),
+    linear-gradient(160deg, var(--bg1), var(--bg2));
+  background-attachment: fixed;
+}
+
+a {
+  color: var(--accent);
+  text-decoration: none;
+  transition: color 0.15s ease, text-shadow 0.15s ease;
+}
+
+a:hover {
+  color: #fff;
+  text-shadow: 0 0 8px rgba(124, 140, 255, 0.55);
+}
+
+code {
+  background: var(--panel);
+  color: var(--accent-2);
+  padding: 0 5px;
+  border-radius: 6px;
+  font-family: var(--mono);
+  font-size: 0.9em;
+}
+
+/* custom scrollbars */
+* {
+  scrollbar-width: thin;
+  scrollbar-color: var(--accent) var(--panel);
+}
+
+::-webkit-scrollbar-track {
+  background: var(--panel);
+  border-radius: 10px;
+}
+
+::-webkit-scrollbar-thumb {
+  background: var(--accent);
+  border-radius: 10px;
+}
+
+::selection {
+  background-color: var(--accent);
+  color: var(--bg1);
+}
+
+/* ========== Layout: sidebar + floating main ========== */
+
+.app-shell {
+  min-height: 100vh;
+}
+
+/* The rail is part of the page background — no card, no border, no shadow */
+.sidenav {
+  position: fixed;
+  top: 0;
+  left: 0;
+  bottom: 0;
+  width: calc(var(--sidebar-w) + var(--inset));
+  z-index: 40;
+  display: flex;
+  flex-direction: column;
+  padding: 14px 0 12px;
+  overflow: hidden;
+  background-color: transparent;
+  border: 0;
+  border-radius: 0;
+  box-shadow: none;
+  /* transform only used on small screens (see max-width query) */
+  transform: none;
+  transition: transform 0.2s ease;
+}
+
+@media (max-width: 992px) {
+  /* As a slide-over drawer it still needs to be opaque */
+  .sidenav {
+    width: var(--sidebar-w);
+    padding-top: 8px;
+    background-color: rgba(18, 20, 42, 0.97);
+    border-right: 1px solid var(--border);
+    box-shadow: 0 20px 60px rgba(0, 0, 0, 0.5);
+    backdrop-filter: blur(16px);
+    -webkit-backdrop-filter: blur(16px);
+    transform: translateX(calc(-100% - var(--inset) - 8px));
+  }
+
+  .sidenav.is-open {
+    transform: translateX(0);
+  }
+}
+
+.sidenav-backdrop {
+  display: none;
+  position: fixed;
+  inset: 0;
+  z-index: 35;
+  background: rgba(0, 0, 0, 0.45);
+  backdrop-filter: blur(2px);
+}
+
+.sidenav-backdrop.is-open {
+  display: block;
+}
+
+.sidenav .brand {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  gap: 0.7rem;
+  padding: 16px 16px 14px;
+  color: var(--text);
+  text-decoration: none;
+  border-bottom: 1px solid var(--border);
+  margin-bottom: 8px;
+  text-align: left;
+}
+
+.sidenav .brand:hover {
+  text-shadow: none;
+  color: #fff;
+}
+
+.sidenav .brand .brand-logo {
+  display: block;
+  width: 44px;
+  height: 44px;
+  max-width: none;
+  object-fit: contain;
+  border-radius: 12px;
+  flex: 0 0 auto;
+}
+
+.sidenav .brand h1 {
+  margin: 0;
+  font-size: 1rem;
+  font-weight: 600;
+  letter-spacing: -0.01em;
+}
+
+.sidenav-nav {
+  flex: 1;
+  overflow-y: auto;
+  padding: 4px 10px;
+  list-style: none;
+  margin: 0;
+}
+
+.sidenav-nav::before {
+  content: "Workspace";
+  display: block;
+  margin: 10px 12px 8px;
+  color: var(--muted);
+  font-size: 0.7rem;
+  font-weight: 600;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+}
+
+.sidenav-nav a {
+  display: block;
+  padding: 10px 12px;
+  border-radius: 10px;
+  color: var(--text);
+  text-decoration: none;
+  transition: background-color 0.15s ease, box-shadow 0.15s ease;
+}
+
+.sidenav-nav a:hover {
+  background-color: var(--hover);
+  box-shadow: inset 0 0 20px rgba(124, 140, 255, 0.18), 0 0 12px rgba(124, 140, 255, 0.12);
+  text-shadow: none;
+  color: #fff;
+}
+
+.sidenav-nav a.is-active {
+  background-color: var(--hover);
+  box-shadow: inset 3px 0 0 var(--accent), inset 0 0 20px rgba(124, 140, 255, 0.14);
+  color: #fff;
+}
+
+.sidenav-nav .nav-section {
+  margin: 12px 12px 6px;
+  font-size: 0.7rem;
+  font-weight: 600;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--muted);
+}
+
+.sidenav-nav > .nav-category {
+  margin-bottom: 2px;
+}
+
+/* Categories can be toggled without changing their page link. */
+.sidenav-subnav {
+  list-style: none;
+  margin: 0;
+  padding: 0 0 0 10px;
+  border-left: 1px solid var(--border);
+  margin-left: 14px;
+  display: none;
+}
+
+.sidenav-nav .has-children.is-expanded > .sidenav-subnav {
+  display: block;
+  margin-bottom: 6px;
+}
+
+.sidenav-nav .has-children > a::after {
+  content: '⌄';
+  float: right;
+  margin-left: 8px;
+  color: var(--muted);
+  font-size: 0.9em;
+  line-height: 1.4;
+}
+
+.sidenav-nav .has-children.is-collapsed > a::after {
+  content: '›';
+}
+
+.sidenav-subnav a {
+  padding: 7px 12px;
+  font-size: 0.92em;
+  color: var(--muted);
+}
+
+.sidenav-subnav a:hover,
+.sidenav-subnav a.is-active {
+  color: #fff;
+}
+
+.sidenav-nav .nav-category.has-active-child > a,
+.sidenav-nav .nav-category.is-current > a {
+  color: #fff;
+}
+
+/* Visually hidden, still read by screen readers */
+.sr-only {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip-path: inset(50%);
+  white-space: nowrap;
+  border: 0;
+}
+
+/* Search sits at the bottom of the rail, above the account buttons */
+.sidenav-search {
+  display: flex;
+  gap: 6px;
+  align-items: center;
+  margin: 0;
+  padding: 10px 14px;
+}
+
+.sidenav-search input[type="search"] {
+  flex: 1;
+  min-width: 0;
+  padding: 8px 10px;
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  background-color: var(--panel);
+  color: var(--text);
+  font: inherit;
+  font-size: 0.9rem;
+  -webkit-appearance: none;
+  appearance: none;
+}
+
+.sidenav-search input[type="search"]::placeholder {
+  color: var(--muted);
+}
+
+.sidenav-search input[type="search"]:focus {
+  outline: none;
+  border-color: var(--accent);
+  box-shadow: 0 0 0 2px rgba(124, 140, 255, 0.22);
+}
+
+.sidenav-search-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 34px;
+  height: 34px;
+  flex: 0 0 auto;
+  padding: 0;
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  background: var(--panel);
+  color: var(--muted);
+  cursor: pointer;
+  transition: color 0.15s ease, border-color 0.15s ease, background-color 0.15s ease;
+}
+
+.sidenav-search-btn:hover {
+  color: #fff;
+  border-color: var(--border-strong);
+  background: var(--hover);
+}
+
+.sidenav-actions {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 0.5rem;
+  flex-wrap: wrap;
+  padding: 12px 14px 14px;
+  margin-top: auto;
+  border-top: 1px solid var(--border);
+}
+
+.sidenav-logout-form {
+  display: inline;
+  margin: 0;
+}
+
+.sidenav-icon-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 40px;
+  height: 40px;
+  border-radius: 12px;
+  border: 1px solid var(--border);
+  background: var(--panel);
+  color: var(--text) !important;
+  text-decoration: none !important;
+  box-shadow: 0 0 10px rgba(124, 140, 255, 0.08), inset 0 1px 0 rgba(255, 255, 255, 0.04);
+  transition: background-color 0.15s ease, border-color 0.15s ease, box-shadow 0.15s ease, color 0.15s ease;
+}
+
+.sidenav-icon-btn:hover {
+  background: var(--hover);
+  border-color: var(--border-strong);
+  color: #fff !important;
+  text-shadow: none;
+  box-shadow: 0 0 16px rgba(124, 140, 255, 0.18), inset 0 1px 0 rgba(255, 255, 255, 0.06);
+}
+
+.sidenav-icon-btn.is-active {
+  background: rgba(124, 140, 255, 0.16);
+  border-color: rgba(124, 140, 255, 0.35);
+  color: var(--accent) !important;
+  box-shadow: 0 0 14px rgba(124, 140, 255, 0.2), inset 0 1px 0 rgba(255, 255, 255, 0.06);
+}
+
+.sidenav-icon-letter {
+  font-size: 1rem;
+  font-weight: 700;
+  line-height: 1;
+  letter-spacing: 0.02em;
+}
+
+.sidenav-icon-plus {
+  font-size: 1.35rem;
+  font-weight: 500;
+  line-height: 1;
+}
+
+.sidenav-icon-svg {
+  display: block;
+}
+
+.menu-toggle {
+  display: inline-flex;
+  position: fixed;
+  top: calc(var(--inset) + 8px);
+  left: calc(var(--inset) + 8px);
+  z-index: 50;
+  width: 42px;
+  height: 42px;
+  align-items: center;
+  justify-content: center;
+  border-radius: 12px;
+  border: 1px solid var(--border);
+  background: var(--panel);
+  color: var(--text);
+  cursor: pointer;
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.35);
+}
+
+.menu-toggle:hover {
+  background: var(--hover);
+  border-color: var(--border-strong);
+}
+
+main.wiki-container {
+  margin: var(--inset) var(--inset) 0;
+  padding: 28px 32px;
+  box-sizing: border-box;
+  min-height: calc(100vh - var(--inset));
+  background-color: var(--card);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  box-shadow: 0 20px 60px rgba(0, 0, 0, 0.45), inset 0 1px 0 rgba(255, 255, 255, 0.04);
+  backdrop-filter: blur(14px);
+  -webkit-backdrop-filter: blur(14px);
+}
+
+@media (min-width: 993px) {
+  .menu-toggle {
+    display: none;
+  }
+
+  .sidenav-backdrop {
+    display: none !important;
+  }
+
+  .sidenav {
+    transform: none !important;
+    overflow-y: auto;
+  }
+
+  main.wiki-container {
+    margin: var(--inset) var(--inset) 0 calc(var(--sidebar-w) + var(--inset) * 2);
+  }
+
+  .site-footer {
+    margin-left: calc(var(--sidebar-w) + var(--inset) * 2);
+    margin-right: var(--inset);
+  }
+}
+
+/* ========== Cards / panels (inside main, avoid double glass) ========== */
+
+.card,
+.admin-editor,
+.admin-panel,
+.wiki-article {
+  background: transparent;
+  border: 0;
+  box-shadow: none;
+  border-radius: 0;
+  padding: 0;
+  backdrop-filter: none;
+}
+
+/* ========== Public reading layout ========== */
+
+.is-public main.wiki-container {
+  padding: 0;
+  overflow: hidden;
+}
+
+.wiki-reading-layout {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) 208px;
+  min-height: calc(100vh - var(--inset));
+}
+
+.wiki-reading-layout > .wiki-article {
+  min-width: 0;
+  padding: clamp(34px, 5vw, 58px) clamp(24px, 6vw, 82px) 68px;
+  background: radial-gradient(circle at 78% 0%, rgba(124, 140, 255, 0.07), transparent 34%), rgba(18, 20, 42, 0.7);
+}
+
+.article-kicker {
+  display: flex;
+  align-items: center;
+  gap: 9px;
+  margin: 0 0 13px;
+  color: var(--accent-2);
+  font-size: 0.72rem;
+  font-weight: 600;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+}
+
+.article-kicker span {
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: var(--accent-2);
+  box-shadow: 0 0 10px rgba(86, 208, 201, 0.55);
+}
+
+.article-header,
+.wiki-article-content,
+.subpage-list,
+.article-actions {
+  max-width: 720px;
+}
+
+.is-public .article-header h1 {
+  margin: 0;
+  color: var(--text);
+  font-family: var(--font);
+  font-size: clamp(2.2rem, 4vw, 3.25rem);
+  font-weight: 600;
+  letter-spacing: -0.055em;
+  line-height: 1.03;
+}
+
+.is-public .article-header .meta {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin: 18px 0 0;
+  padding: 0 0 24px;
+  border-bottom: 1px solid var(--border);
+  color: var(--muted);
+  font-size: 0.78rem;
+}
+
+.is-public .breadcrumb {
+  margin-bottom: 26px;
+  font-size: 0.78rem;
+}
+
+.is-public .breadcrumb a {
+  color: var(--accent);
+}
+
+.is-public .breadcrumb-current {
+  color: var(--muted);
+}
+
+.is-public .wiki-article-content {
+  padding-top: 28px;
+  color: var(--text);
+  font-family: var(--font);
+  font-size: 1.04rem;
+  line-height: 1.78;
+}
+
+.is-public .wiki-article-content h1,
+.is-public .wiki-article-content h2,
+.is-public .wiki-article-content h3,
+.is-public .wiki-article-content h4,
+.is-public .wiki-article-content h5,
+.is-public .wiki-article-content h6 {
+  border: 0;
+  padding-bottom: 0;
+  color: var(--text);
+  font-family: var(--font);
+  font-weight: 600;
+  letter-spacing: -0.02em;
+}
+
+.is-public .wiki-article-content h2 {
+  margin: 37px 0 11px;
+  font-size: 1.15rem;
+}
+
+.is-public .wiki-article-content h3 {
+  margin: 28px 0 9px;
+  font-size: 1rem;
+}
+
+.is-public .wiki-article-content p {
+  margin: 0 0 19px;
+}
+
+.is-public .wiki-article-content blockquote {
+  margin: 28px 0;
+  padding: 15px 17px;
+  border-left: 3px solid var(--accent-2);
+  border-radius: 0 10px 10px 0;
+  background: rgba(86, 208, 201, 0.08);
+  color: #b4ddd7;
+  font-family: var(--font);
+  font-size: 0.88rem;
+  line-height: 1.6;
+}
+
+.is-public .wiki-article-content pre {
+  overflow-x: auto;
+  margin: 24px 0;
+  padding: 16px 18px;
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  background: rgba(10, 11, 22, 0.55);
+  font-family: var(--mono);
+  font-size: 0.86rem;
+  line-height: 1.55;
+}
+
+.is-public .subpage-list {
+  margin-top: 34px;
+  padding-top: 22px;
+  border-top: 1px solid var(--border);
+}
+
+.is-public .subpage-list h2 {
+  margin: 0 0 14px;
+  color: var(--text);
+  font-size: 1.15rem;
+  font-weight: 600;
+}
+
+.is-public .subpage-list ul {
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 10px;
+}
+
+.is-public .subpage-list li a {
+  min-height: 68px;
+  padding: 14px 15px;
+  border-radius: 11px;
+  background: rgba(28, 30, 58, 0.72);
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.04);
+  font-size: 0.88rem;
+  font-weight: 500;
+}
+
+.is-public .subpage-list li a::after {
+  display: block;
+  margin-top: 5px;
+  color: var(--muted);
+  content: "Open page ↗";
+  font-size: 0.74rem;
+  font-weight: 400;
+}
+
+.is-public .article-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 9px;
+  margin-top: 40px;
+}
+
+.page-toc {
+  padding: 51px 20px 20px;
+  border-left: 1px solid var(--border);
+  background: rgba(18, 20, 42, 0.48);
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.025);
+  color: var(--muted);
+}
+
+.page-toc[hidden] {
+  display: none;
+}
+
+.page-toc-label {
+  margin-bottom: 13px;
+  color: var(--muted);
+  font-size: 0.68rem;
+  font-weight: 600;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+}
+
+.page-toc-links a {
+  display: block;
+  padding: 6px 0 6px 12px;
+  border-left: 1px solid transparent;
+  color: var(--muted);
+  font-size: 0.78rem;
+}
+
+.page-toc-links a.is-nested {
+  padding-left: 22px;
+  font-size: 0.74rem;
+}
+
+.page-toc-links a:first-child {
+  border-left-color: var(--accent);
+  color: var(--text);
+}
+
+.page-toc-links a:hover {
+  color: var(--accent);
+}
+
+@media (max-width: 1060px) {
+  .wiki-reading-layout {
+    grid-template-columns: minmax(0, 1fr);
+  }
+
+  .page-toc {
+    display: none;
+  }
+}
+
+@media (max-width: 740px) {
+  .wiki-reading-layout > .wiki-article {
+    padding: 33px 21px 50px;
+  }
+
+  .subpage-list ul {
+    grid-template-columns: 1fr;
+  }
+}
+
+/* ========== Typography / article ========== */
+
+.article-header h1 {
+  margin: 0 0 0.25rem;
+  color: var(--text);
+  font-size: 2rem;
+  font-weight: 700;
+}
+
+.article-header .meta {
+  color: var(--muted);
+  font-size: 0.9rem;
+  margin: 0 0 1.25rem;
+}
+
+.breadcrumb {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.4rem;
+  margin: 0 0 1rem;
+  font-size: 0.9rem;
+  color: var(--muted);
+}
+
+.breadcrumb-sep {
+  opacity: 0.6;
+}
+
+.breadcrumb-current {
+  color: var(--text);
+}
+
+.subpage-list {
+  margin-top: 2rem;
+  padding-top: 1.25rem;
+  border-top: 1px solid var(--border);
+}
+
+.subpage-list h2 {
+  margin: 0 0 0.75rem;
+  font-size: 1.15rem;
+  color: var(--accent);
+  border: none;
+  padding: 0;
+}
+
+.subpage-list ul {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: grid;
+  gap: 0.5rem;
+}
+
+.subpage-list li a {
+  display: block;
+  padding: 0.75rem 1rem;
+  border-radius: 12px;
+  border: 1px solid var(--border);
+  background: var(--panel);
+  color: var(--text);
+  text-decoration: none;
+  transition: background-color 0.15s ease, border-color 0.15s ease, box-shadow 0.15s ease;
+}
+
+.subpage-list li a:hover {
+  background: var(--hover);
+  border-color: var(--border-strong);
+  box-shadow: 0 0 16px rgba(124, 140, 255, 0.12);
+  text-shadow: none;
+  color: #fff;
+}
+
+.tree-branch {
+  color: var(--muted);
+  margin-right: 0.35rem;
+}
+
+.badge-category {
+  display: inline-block;
+  margin-left: 0.5rem;
+  padding: 0.1rem 0.45rem;
+  font-size: 0.7rem;
+  font-weight: 600;
+  letter-spacing: 0.03em;
+  text-transform: uppercase;
+  border-radius: 999px;
+  border: 1px solid rgba(124, 140, 255, 0.35);
+  color: var(--accent);
+  background: rgba(124, 140, 255, 0.1);
+  vertical-align: middle;
+}
+
+.badge-category.muted {
+  border-color: var(--border);
+  color: var(--muted);
+  background: transparent;
+  font-weight: 500;
+}
+
+.pages-table tr.is-child td {
+  color: var(--text);
+}
+
+.admin-hint {
+  margin: -0.5rem 0 1.25rem;
+  color: var(--muted);
+  font-size: 0.9rem;
+}
+
+.form-group select {
+  width: 100%;
+  background-color: var(--panel);
+  color: var(--text);
+  border: 1px solid var(--border);
+  padding: 10px 12px;
+  border-radius: 12px;
+  font: inherit;
+}
+
+.form-group select:focus {
+  outline: none;
+  border-color: var(--accent);
+  box-shadow: 0 0 0 2px rgba(124, 140, 255, 0.3);
+}
+
+.wiki-article-content h1,
+.wiki-article-content h2,
+.wiki-article-content h3 {
+  color: var(--accent);
+  border-bottom: 1px solid var(--border);
+  padding-bottom: 0.35rem;
+  margin-top: 1.5rem;
+  font-weight: 600;
+}
+
+.wiki-article-content blockquote {
+  margin: 1rem 0;
+  padding: 0.75rem 1rem;
+  border-left: 3px solid var(--accent);
+  background: var(--hover);
+  border-radius: 0 12px 12px 0;
+  color: var(--text);
+}
+
+.wiki-article-content img {
+  max-width: 100%;
+  height: auto;
+  border-radius: 12px;
+  box-shadow: 0 12px 32px rgba(0, 0, 0, 0.35);
+  margin: 1rem 0;
+}
+
+/* Inline PDFs: thumbnail of page one, click opens the full viewer */
+.wiki-article-content .pdf-embed,
+.pdf-embed {
+  margin: 1.25rem 0;
+  width: min(100%, 360px);
+  border: 1px solid var(--border);
+  border-radius: 14px;
+  overflow: hidden;
+  background: var(--panel);
+  box-shadow: 0 12px 32px rgba(0, 0, 0, 0.35);
+  transition: border-color 0.15s ease, box-shadow 0.15s ease, transform 0.15s ease;
+}
+
+.pdf-embed:hover,
+.pdf-embed:focus-within {
+  border-color: rgba(124, 140, 255, 0.5);
+  box-shadow: 0 14px 34px rgba(0, 0, 0, 0.38), 0 0 18px rgba(124, 140, 255, 0.16);
+  transform: translateY(-1px);
+}
+
+.pdf-thumb {
+  display: block;
+  position: relative;
+  width: 100%;
+  height: 260px;
+  padding: 0;
+  border: 0;
+  border-bottom: 1px solid var(--border);
+  background: #0a0b16;
+  cursor: zoom-in;
+  overflow: hidden;
+}
+
+.pdf-thumb:focus-visible {
+  outline: 2px solid var(--accent);
+  outline-offset: -2px;
+}
+
+/* Shows through only when the browser cannot preview PDFs inline */
+.pdf-thumb::before {
+  content: "PDF";
+  position: absolute;
+  inset: 0;
+  display: grid;
+  place-items: center;
+  color: var(--muted);
+  font-size: 2rem;
+  font-weight: 700;
+  letter-spacing: 0.12em;
+  opacity: 0.5;
+}
+
+/* Rendered at double size then scaled, so page one reads as a thumbnail.
+   The extra 48px overshoots the frame so the viewer's scrollbars land outside
+   the card and get clipped by overflow: hidden. */
+.pdf-thumb-frame {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: calc(200% + 48px);
+  height: calc(200% + 48px);
+  transform: scale(0.5);
+  transform-origin: top left;
+  border: 0;
+  background: #0a0b16;
+  pointer-events: none;
+  overflow: hidden;
+}
+
+.pdf-thumb-badge {
+  position: absolute;
+  right: 8px;
+  bottom: 8px;
+  padding: 2px 8px;
+  border-radius: 999px;
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  color: var(--text);
+  background: rgba(15, 16, 33, 0.85);
+  border: 1px solid var(--border-strong);
+}
+
+.pdf-embed-name {
+  display: block;
+  margin-bottom: 2px;
+  color: var(--text);
+  font-weight: 600;
+  overflow-wrap: anywhere;
+}
+
+.wiki-article-content .pdf-embed-actions,
+.pdf-embed-actions {
+  margin: 0;
+  padding: 0.55rem 0.9rem;
+  font-size: 0.85rem;
+  color: var(--muted);
+  border-top: 1px solid var(--border);
+  background: rgba(0, 0, 0, 0.2);
+}
+
+.wiki-article-content .pdf-embed-actions a,
+.pdf-embed-actions a {
+  color: var(--accent);
+}
+
+.wiki-article-content a:hover {
+  text-shadow: 0 0 8px rgba(124, 140, 255, 0.55);
+}
+
+.article-actions {
+  margin-top: 2rem;
+  padding-top: 1rem;
+  border-top: 1px solid var(--border);
+}
+
+/* ========== Admin panel chrome ========== */
+
+.panel-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 1rem;
+  margin-bottom: 1.25rem;
+  flex-wrap: wrap;
+}
+
+.panel-header h2 {
+  margin: 0;
+  color: var(--text);
+  font-weight: 600;
+}
+
+.empty-state {
+  color: var(--muted);
+}
+
+/* Admin tabs (Pages | Branding) */
+.admin-tabs {
+  display: flex;
+  gap: 0.35rem;
+  margin: -0.25rem 0 1.35rem;
+  padding: 0.3rem;
+  border-radius: 14px;
+  border: 1px solid var(--border);
+  background: rgba(0, 0, 0, 0.18);
+  flex-wrap: wrap;
+}
+
+.admin-tab {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  flex: 1 1 auto;
+  min-width: 8rem;
+  padding: 0.55rem 1rem;
+  border-radius: 10px;
+  border: 1px solid transparent;
+  color: var(--muted) !important;
+  text-decoration: none !important;
+  font-weight: 600;
+  font-size: 0.92rem;
+  letter-spacing: 0.01em;
+  transition: background-color 0.15s ease, border-color 0.15s ease, color 0.15s ease, box-shadow 0.15s ease;
+}
+
+.admin-tab:hover {
+  color: var(--text) !important;
+  background: var(--hover);
+  text-shadow: none;
+}
+
+.admin-tab.is-active {
+  color: var(--accent) !important;
+  background: rgba(124, 140, 255, 0.14);
+  border-color: rgba(124, 140, 255, 0.35);
+  box-shadow: 0 0 16px rgba(124, 140, 255, 0.12), inset 0 1px 0 rgba(255, 255, 255, 0.05);
+}
+
+.admin-tab-panel {
+  animation: adminTabIn 0.18s ease;
+}
+
+@keyframes adminTabIn {
+  from { opacity: 0; transform: translateY(4px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+.admin-section-title {
+  margin: 0.5rem 0 1rem;
+  padding-bottom: 0.45rem;
+  border-bottom: 1px solid var(--border);
+  color: var(--accent);
+  font-size: 1.05rem;
+  font-weight: 600;
+}
+
+.admin-section-title:not(:first-child) {
+  margin-top: 1.75rem;
+}
+
+.branding-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 1.25rem 1.5rem;
+}
+
+@media (max-width: 720px) {
+  .branding-grid {
+    grid-template-columns: 1fr;
+  }
+}
+
+.logo-preview-row {
+  display: flex;
+  align-items: flex-start;
+  gap: 1rem;
+}
+
+.logo-preview {
+  width: 72px;
+  height: 72px;
+  object-fit: contain;
+  border-radius: 14px;
+  border: 1px solid var(--border);
+  background: rgba(0, 0, 0, 0.25);
+  padding: 6px;
+  flex-shrink: 0;
+}
+
+.radio-stack {
+  display: flex;
+  flex-direction: column;
+  gap: 0.15rem;
+  margin-top: 0.35rem;
+}
+
+.checkbox-inline {
+  display: flex !important;
+  align-items: center;
+  gap: 0.5rem;
+  margin-top: 0.65rem;
+  font-weight: 500 !important;
+  color: var(--text) !important;
+  cursor: pointer;
+  font-size: 0.9rem !important;
+  /* It is a sentence, not a field label — don't inherit the uppercase caps */
+  text-transform: none !important;
+  letter-spacing: normal !important;
+}
+
+/* Themed checkbox: native box replaced with the app's own square + tick */
+.checkbox-inline input[type="checkbox"],
+.checkbox-inline input[type="radio"] {
+  -webkit-appearance: none;
+  appearance: none;
+  display: grid;
+  place-content: center;
+  width: 18px !important;
+  height: 18px;
+  min-height: 0 !important;
+  flex: 0 0 auto;
+  margin: 0;
+  padding: 0 !important;
+  border: 1px solid var(--border-strong);
+  border-radius: 6px;
+  background-color: var(--panel);
+  cursor: pointer;
+  transition: background-color 0.15s ease, border-color 0.15s ease, box-shadow 0.15s ease;
+}
+
+.checkbox-inline input[type="radio"] {
+  border-radius: 50%;
+}
+
+.checkbox-inline input[type="checkbox"]::before,
+.checkbox-inline input[type="radio"]::before {
+  content: "";
+  width: 11px;
+  height: 11px;
+  transform: scale(0);
+  transform-origin: center;
+  transition: transform 0.12s ease-in-out;
+  background-color: var(--bg1);
+  clip-path: polygon(14% 44%, 0 65%, 50% 100%, 100% 16%, 80% 0%, 43% 62%);
+}
+
+.checkbox-inline input[type="radio"]::before {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  clip-path: none;
+  background-color: var(--accent);
+}
+
+.checkbox-inline input[type="checkbox"]:checked,
+.checkbox-inline input[type="radio"]:checked {
+  background-color: var(--accent);
+  border-color: var(--accent);
+}
+
+.checkbox-inline input[type="radio"]:checked {
+  background-color: var(--panel);
+}
+
+.checkbox-inline input[type="checkbox"]:checked::before,
+.checkbox-inline input[type="radio"]:checked::before {
+  transform: scale(1);
+}
+
+.checkbox-inline:hover input[type="checkbox"],
+.checkbox-inline:hover input[type="radio"] {
+  border-color: var(--accent);
+}
+
+.checkbox-inline input[type="checkbox"]:focus-visible,
+.checkbox-inline input[type="radio"]:focus-visible {
+  outline: none;
+  box-shadow: 0 0 0 3px rgba(124, 140, 255, 0.3);
+}
+
+.css-editor-group .css-editor-meta {
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+  gap: 0.75rem;
+  flex-wrap: wrap;
+  margin-bottom: 0.4rem;
+}
+
+.css-editor-group .css-editor-meta label {
+  margin-bottom: 0;
+}
+
+.css-status {
+  font-size: 0.8rem;
+  font-weight: 600;
+  letter-spacing: 0.02em;
+  padding: 0.15rem 0.55rem;
+  border-radius: 999px;
+  border: 1px solid var(--border);
+  color: var(--muted);
+}
+
+.css-status.is-custom {
+  color: var(--accent-2);
+  border-color: rgba(86, 208, 201, 0.35);
+  background: rgba(86, 208, 201, 0.1);
+}
+
+.css-status.is-default {
+  color: var(--muted);
+}
+
+textarea.css-editor {
+  width: 100%;
+  min-height: 22rem;
+  box-sizing: border-box;
+  padding: 12px 14px;
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  background: #0e1020;
+  color: var(--text);
+  font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, "Liberation Mono", monospace;
+  font-size: 0.82rem;
+  line-height: 1.5;
+  resize: vertical;
+  tab-size: 2;
+  white-space: pre;
+  overflow: auto;
+}
+
+textarea.css-editor:focus {
+  outline: none;
+  border-color: var(--accent);
+  box-shadow: 0 0 0 2px rgba(124, 140, 255, 0.3);
+}
+
+/* Tree controls */
+.tree-toggle {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 1.6rem;
+  height: 1.6rem;
+  min-width: 1.6rem;
+  padding: 0;
+  margin-right: 0.35rem;
+  border-radius: 8px;
+  border: 1px solid var(--border);
+  background: var(--panel);
+  color: var(--accent) !important;
+  font-size: 0.75rem;
+  line-height: 1;
+  cursor: pointer;
+  box-shadow: none;
+  vertical-align: middle;
+}
+
+.tree-toggle:hover {
+  background: var(--hover);
+  border-color: var(--border-strong);
+  color: #fff !important;
+}
+
+.tree-toggle-spacer {
+  display: inline-block;
+  width: 1.6rem;
+  margin-right: 0.35rem;
+  vertical-align: middle;
+}
+
+.btn-icon {
+  display: inline-flex !important;
+  align-items: center;
+  justify-content: center;
+  width: 2rem;
+  height: 2rem !important;
+  min-width: 2rem;
+  padding: 0 !important;
+  font-size: 0.95rem;
+  line-height: 1;
+}
+
+.btn-icon:disabled {
+  opacity: 0.35;
+  cursor: not-allowed;
+}
+
+.admin-tree-actions {
+  gap: 0.45rem !important;
+}
+
+.admin-tree-title strong {
+  vertical-align: middle;
+}
+
+/* While an AJAX reorder is in flight */
+#adminPageTree.is-reordering {
+  opacity: 0.85;
+  pointer-events: none;
+}
+
+#adminPageTree.is-reordering .admin-tree-row {
+  transition: background-color 0.15s ease;
+}
+
+/* ========== Forms ========== */
+
+.form-group {
+  margin-bottom: 1.15rem;
+}
+
+.form-group label {
+  display: block;
+  margin-bottom: 0.4rem;
+  font-weight: 600;
+  color: var(--muted);
+  font-size: 0.9rem;
+}
+
+.form-group input[type="text"],
+.form-group input[type="password"],
+.form-group input[type="email"],
+.form-group input[type="url"],
+.form-group input[type="search"],
+.form-group input[type="number"],
+.form-group input[type="file"],
+.form-group textarea,
+.form-group select {
+  width: 100%;
+  background-color: var(--panel);
+  color: var(--text);
+  border: 1px solid var(--border);
+  padding: 10px 12px;
+  border-radius: 12px;
+  font: inherit;
+}
+
+.form-group input:focus,
+.form-group textarea:focus,
+.form-group select:focus {
+  outline: none;
+  border-color: var(--accent);
+  box-shadow: 0 0 0 2px rgba(124, 140, 255, 0.3);
+}
+
+.form-group input[readonly] {
+  opacity: 0.7;
+  cursor: not-allowed;
+}
+
+/* File pickers: the native button becomes a theme button */
+.form-group input[type="file"] {
+  padding: 8px 10px;
+  cursor: pointer;
+}
+
+.form-group input[type="file"]::file-selector-button {
+  margin-right: 0.75rem;
+  padding: 8px 14px;
+  border: 1px solid var(--border-strong);
+  border-radius: 10px;
+  background: linear-gradient(180deg, rgba(124, 140, 255, 0.22), rgba(124, 140, 255, 0.1));
+  color: var(--text);
+  font: inherit;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background 0.15s ease, border-color 0.15s ease;
+}
+
+.form-group input[type="file"]::file-selector-button:hover {
+  background: rgba(124, 140, 255, 0.3);
+  border-color: var(--accent);
+}
+
+/* Selects: drop the platform chevron for a theme-coloured one */
+.form-group select {
+  appearance: none;
+  -webkit-appearance: none;
+  padding-right: 36px;
+  cursor: pointer;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16' fill='%238b8fc7'%3E%3Cpath d='M4.2 6.1 8 9.9l3.8-3.8z'/%3E%3C/svg%3E");
+  background-repeat: no-repeat;
+  background-position: right 12px center;
+  background-size: 14px;
+}
+
+.form-group select option {
+  background-color: #171935;
+  color: var(--text);
+}
+
+.form-group .hint {
+  display: block;
+  margin-top: 0.35rem;
+  color: var(--muted);
+  font-size: 0.85rem;
+}
+
+.form-actions {
+  display: flex;
+  gap: 0.75rem;
+  flex-wrap: wrap;
+  margin-top: 1.25rem;
+  align-items: center;
+}
+
+/* Toast UI Editor */
+.md-editor-host {
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  overflow: hidden;
+  background: var(--panel);
+}
+
+.md-editor-host .toastui-editor-defaultUI {
+  border: none;
+}
+
+.md-editor-host .toastui-editor-defaultUI-toolbar,
+.md-editor-host .toastui-editor-mode-switch {
+  background: rgba(18, 20, 42, 0.95);
+  border-color: var(--border) !important;
+}
+
+.md-editor-host .toastui-editor-ww-container,
+.md-editor-host .toastui-editor-md-container {
+  background: #12142a;
+}
+
+.pdf-toolbar-btn {
+  color: var(--accent) !important;
+  cursor: pointer;
+  border: 1px solid rgba(124, 140, 255, 0.35) !important;
+  border-radius: 6px !important;
+  background: rgba(124, 140, 255, 0.12) !important;
+}
+
+.md-fallback-textarea {
+  width: 100%;
+  min-height: 360px;
+  box-sizing: border-box;
+  padding: 12px 14px;
+  border: 0;
+  border-radius: 0 0 12px 12px;
+  background: #12142a;
+  color: var(--text);
+  font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+  font-size: 0.95rem;
+  line-height: 1.55;
+  resize: vertical;
+}
+
+.md-fallback-textarea:focus {
+  outline: 2px solid var(--accent);
+  outline-offset: -2px;
+}
+
+/* ========== Buttons (from base theme components) ========== */
+
+button,
+.btn,
+.btn-flat,
+.btn-ghost {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  height: 36px;
+  padding: 0 16px;
+  background-color: var(--card);
+  color: var(--text) !important;
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  font-family: inherit;
+  font-size: 14px;
+  font-weight: 500;
+  line-height: 1;
+  letter-spacing: 0;
+  text-transform: none;
+  white-space: nowrap;
+  cursor: pointer;
+  text-decoration: none !important;
+  box-shadow: 0 0 10px rgba(124, 140, 255, 0.08), inset 0 1px 0 rgba(255, 255, 255, 0.04);
+  transition: background-color 0.15s ease, border-color 0.15s ease, box-shadow 0.15s ease, transform 0.05s ease;
+}
+
+button:hover,
+.btn:hover,
+.btn-flat:hover,
+.btn-ghost:hover {
+  background-color: var(--hover);
+  border-color: var(--border-strong);
+  color: #fff !important;
+  box-shadow: 0 0 16px rgba(124, 140, 255, 0.18), inset 0 1px 0 rgba(255, 255, 255, 0.06);
+  text-shadow: none;
+}
+
+button:active,
+.btn:active {
+  transform: scale(0.97);
+}
+
+.btn.primary,
+.btn-primary,
+button[type="submit"] {
+  background-color: rgba(124, 140, 255, 0.16);
+  border-color: rgba(124, 140, 255, 0.35);
+  color: var(--accent) !important;
+  font-weight: 600;
+  box-shadow: 0 0 14px rgba(124, 140, 255, 0.2), inset 0 1px 0 rgba(255, 255, 255, 0.06);
+}
+
+.btn.primary:hover,
+.btn-primary:hover,
+button[type="submit"]:hover {
+  background-color: rgba(124, 140, 255, 0.24);
+  border-color: rgba(124, 140, 255, 0.5);
+  color: #fff !important;
+  box-shadow: 0 0 22px rgba(124, 140, 255, 0.35), inset 0 1px 0 rgba(255, 255, 255, 0.08);
+}
+
+.btn-flat,
+.btn-ghost {
+  background-color: transparent;
+  border-color: transparent;
+  color: var(--muted) !important;
+  box-shadow: none;
+}
+
+.btn-flat:hover,
+.btn-ghost:hover {
+  background-color: var(--hover);
+  color: var(--text) !important;
+  box-shadow: none;
+  border-color: transparent;
+}
+
+.btn:disabled,
+button:disabled {
+  opacity: 0.55;
+  cursor: wait;
+}
+
+/* ========== Tables ========== */
+
+.pages-table,
+table {
+  width: 100%;
+  border-collapse: collapse;
+  background-color: transparent;
+  color: var(--text);
+  border-radius: 12px;
+  overflow: hidden;
+  font-size: 0.95rem;
+}
+
+.pages-table th,
+.pages-table td,
+table th,
+table td {
+  border: 1px solid var(--border);
+  padding: 10px 12px;
+  text-align: left;
+  vertical-align: middle;
+}
+
+.pages-table th,
+table th {
+  background-color: var(--panel);
+  color: var(--muted);
+  font-weight: 600;
+  font-size: 0.8rem;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+}
+
+.pages-table tr:nth-child(even),
+table tr:nth-child(even) {
+  background-color: rgba(255, 255, 255, 0.03);
+}
+
+.pages-table tr:hover,
+table tr:hover {
+  background-color: var(--hover);
+}
+
+.pages-table .actions {
+  display: flex;
+  gap: 0.75rem;
+  align-items: center;
+  flex-wrap: wrap;
+}
+
+.inline-form {
+  display: inline;
+  margin: 0;
+}
+
+/* Destructive controls (delete, remove, reset) always read red — the selectors
+   outrank the generic button[type="submit"] accent rule above. */
+.link-danger,
+a.link-danger,
+button.link-danger,
+button[type="submit"].link-danger,
+.btn.link-danger,
+.btn-ghost.link-danger {
+  display: inline-flex;
+  align-items: center;
+  height: 28px;
+  padding: 0 10px;
+  border: 1px solid rgba(255, 107, 138, 0.32) !important;
+  border-radius: 9px;
+  background-color: rgba(255, 107, 138, 0.12) !important;
+  color: var(--danger) !important;
+  font: inherit;
+  font-size: 0.82rem;
+  font-weight: 600;
+  cursor: pointer;
+  box-shadow: none !important;
+  text-decoration: none;
+}
+
+.link-danger:hover,
+a.link-danger:hover,
+button.link-danger:hover,
+button[type="submit"].link-danger:hover,
+.btn.link-danger:hover,
+.btn-ghost.link-danger:hover {
+  border-color: var(--danger) !important;
+  background-color: rgba(255, 107, 138, 0.22) !important;
+  color: #ffd0da !important;
+  text-shadow: none;
+}
+
+.link-danger:focus-visible {
+  outline: none;
+  box-shadow: 0 0 0 3px rgba(255, 107, 138, 0.3) !important;
+}
+
+/* The full-size button variant keeps the standard control height */
+.btn.link-danger,
+.btn-ghost.link-danger {
+  height: 36px;
+  padding: 0 16px;
+  border-radius: 10px;
+  font-size: 14px;
+}
+
+/* ========== Status banners ========== */
+
+.save-status {
+  margin-bottom: 1rem;
+  padding: 0.75rem 1rem;
+  border-radius: 12px;
+  font-weight: 600;
+}
+
+.save-status.is-success {
+  background: rgba(86, 208, 201, 0.12);
+  border: 1px solid rgba(86, 208, 201, 0.35);
+  color: var(--accent-2);
+}
+
+.save-status.is-error {
+  background: rgba(255, 107, 138, 0.12);
+  border: 1px solid rgba(255, 107, 138, 0.35);
+  color: var(--danger);
+}
+
+/* Bottom toast (page saved / save errors) */
+.save-toast {
+  position: fixed;
+  left: 50%;
+  bottom: 1.5rem;
+  z-index: 1000;
+  min-width: min(360px, calc(100vw - 2rem));
+  max-width: min(480px, calc(100vw - 2rem));
+  padding: 0.9rem 1.25rem;
+  border-radius: 14px;
+  font-weight: 600;
+  font-size: 0.95rem;
+  text-align: center;
+  pointer-events: none;
+  transform: translate(-50%, 120%);
+  opacity: 0;
+  transition: transform 0.28s ease, opacity 0.28s ease;
+  box-shadow: 0 16px 40px rgba(0, 0, 0, 0.45), inset 0 1px 0 rgba(255, 255, 255, 0.06);
+  backdrop-filter: blur(14px);
+  -webkit-backdrop-filter: blur(14px);
+}
+
+.save-toast.is-visible {
+  transform: translate(-50%, 0);
+  opacity: 1;
+}
+
+.save-toast.is-success {
+  background: rgba(18, 20, 42, 0.92);
+  border: 1px solid rgba(86, 208, 201, 0.45);
+  color: var(--accent-2);
+}
+
+.save-toast.is-error {
+  background: rgba(18, 20, 42, 0.92);
+  border: 1px solid rgba(255, 107, 138, 0.45);
+  color: var(--danger);
+}
+
+/* ========== Footer (under main content column) ========== */
+
+.site-footer {
+  margin: 0.75rem var(--inset) var(--inset);
+  padding: 0.75rem 0 0.25rem;
+  text-align: right;
+  color: var(--muted);
+  font-size: 12px;
+}
+
+.site-footer p {
+  margin: 0;
+}
+
+/* Copyright sits at the very bottom of the sidebar, under the admin buttons */
+.sidenav .site-footer {
+  margin: 0;
+  padding: 0 14px 2px;
+  text-align: center;
+  font-size: 11px;
+  opacity: 0.75;
+}
+
+@media (max-width: 600px) {
+  main.wiki-container {
+    padding: 20px 16px;
+  }
+
+  .pages-table thead {
+    display: none;
+  }
+
+  .pages-table tr {
+    display: block;
+    margin-bottom: 1rem;
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 0.5rem;
+  }
+
+  .pages-table td {
+    display: block;
+    border: none;
+    padding: 0.35rem 0.5rem;
+  }
+}
+
+/* ========== Login ========== */
+.login-panel {
+  max-width: 420px;
+  margin: 0 auto;
+}
+
+.login-form .form-actions {
+  margin-top: 1.5rem;
+}
+
+/* ========== Admin / editor surfaces ========== */
+
+.is-admin main.wiki-container {
+  padding: clamp(24px, 4vw, 44px);
+  background: radial-gradient(circle at 84% 0%, rgba(124, 140, 255, 0.08), transparent 34%), rgba(18, 20, 42, 0.78);
+}
+
+.is-admin .admin-panel,
+.is-admin .admin-editor {
+  max-width: 1120px;
+  margin: 0 auto;
+}
+
+.is-admin .panel-header {
+  margin-bottom: 24px;
+  padding-bottom: 18px;
+  border-bottom: 1px solid var(--border);
+}
+
+.is-admin .panel-header h2 {
+  color: var(--text);
+  font-family: var(--font);
+  font-size: clamp(1.8rem, 3vw, 2.4rem);
+  font-weight: 600;
+  letter-spacing: -0.04em;
+}
+
+.is-admin .admin-tabs {
+  max-width: 520px;
+  margin-bottom: 24px;
+  background: rgba(10, 11, 22, 0.28);
+}
+
+.is-admin .admin-section-title {
+  margin-top: 2rem;
+  color: var(--text);
+  font-family: var(--font);
+  font-size: 1.25rem;
+  font-weight: 600;
+  letter-spacing: -0.02em;
+}
+
+.is-admin .admin-section-title:first-child {
+  margin-top: 0.5rem;
+}
+
+.is-admin .admin-hint,
+.is-admin .hint {
+  color: var(--muted);
+}
+
+.is-admin .form-group label,
+.is-admin .css-editor-meta label {
+  color: var(--muted-strong, #b8c1d2);
+  font-size: 0.76rem;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+.is-admin .form-group input[type="text"],
+.is-admin .form-group input[type="password"],
+.is-admin .form-group input[type="file"],
+.is-admin .form-group textarea,
+.is-admin .form-group select {
+  min-height: 42px;
+  /* background-color, not background — the select keeps its chevron image */
+  background-color: rgba(28, 30, 58, 0.72);
+  border-color: var(--border);
+  border-radius: 10px;
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.03);
+}
+
+.is-admin .form-group input:focus,
+.is-admin .form-group textarea:focus,
+.is-admin .form-group select:focus,
+.is-admin textarea.css-editor:focus {
+  border-color: var(--accent);
+  box-shadow: 0 0 0 2px rgba(124, 140, 255, 0.22), 0 0 18px rgba(124, 140, 255, 0.1);
+}
+
+.is-admin .admin-tree-table {
+  border-collapse: separate;
+  border-spacing: 0 8px;
+  overflow: visible;
+}
+
+.is-admin .admin-tree-table thead th {
+  border: 0;
+  background: transparent;
+  color: var(--muted);
+  font-size: 0.7rem;
+}
+
+.is-admin .admin-tree-table tbody tr {
+  background: rgba(28, 30, 58, 0.56);
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.03);
+}
+
+.is-admin .admin-tree-table tbody tr:hover {
+  background: rgba(124, 140, 255, 0.1);
+}
+
+.is-admin .admin-tree-table tbody td {
+  border-top: 1px solid var(--border);
+  border-bottom: 1px solid var(--border);
+  padding: 12px;
+}
+
+.is-admin .admin-tree-table tbody td:first-child {
+  border-left: 1px solid var(--border);
+  border-radius: 11px 0 0 11px;
+}
+
+.is-admin .admin-tree-table tbody td:last-child {
+  border-right: 1px solid var(--border);
+  border-radius: 0 11px 11px 0;
+}
+
+.is-admin .admin-tree-table .admin-tree-title strong {
+  color: var(--text);
+  font-weight: 500;
+}
+
+.is-admin .admin-tree-actions a {
+  font-size: 0.82rem;
+}
+
+.is-admin .md-editor-host {
+  border-radius: 14px;
+  background: rgba(18, 20, 42, 0.86);
+  box-shadow: 0 14px 34px rgba(0, 0, 0, 0.22), inset 0 1px 0 rgba(255, 255, 255, 0.04);
+}
+
+.is-admin .md-editor-host .toastui-editor-defaultUI,
+.is-admin .md-editor-host .toastui-editor-toolbar,
+.is-admin .md-editor-host .toastui-editor-defaultUI-toolbar,
+.is-admin .md-editor-host .toastui-editor-mode-switch {
+  background: rgba(18, 20, 42, 0.95) !important;
+  border-color: var(--border) !important;
+}
+
+.is-admin .md-editor-host .toastui-editor-main,
+.is-admin .md-editor-host .toastui-editor-main-container,
+.is-admin .md-editor-host .toastui-editor-ww-container,
+.is-admin .md-editor-host .toastui-editor-md-container,
+.is-admin .md-editor-host .toastui-editor-md-preview {
+  background: #12142a !important;
+}
+
+.is-admin .md-editor-host .toastui-editor-contents,
+.is-admin .md-editor-host .toastui-editor-contents p,
+.is-admin .md-editor-host .toastui-editor-contents li {
+  color: var(--text) !important;
+}
+
+.is-admin .md-editor-host .toastui-editor-contents h1,
+.is-admin .md-editor-host .toastui-editor-contents h2,
+.is-admin .md-editor-host .toastui-editor-contents h3,
+.is-admin .md-editor-host .toastui-editor-contents h4 {
+  color: var(--text) !important;
+  border-color: var(--border) !important;
+}
+
+.is-admin .md-editor-host .toastui-editor-contents a {
+  color: var(--accent) !important;
+}
+
+.is-admin .md-editor-host .toastui-editor-contents code {
+  background: rgba(124, 140, 255, 0.12) !important;
+  color: var(--accent-2) !important;
+}
+
+.is-admin .md-editor-host .toastui-editor-contents pre {
+  background: rgba(10, 11, 22, 0.7) !important;
+}
+
+.is-admin .form-actions {
+  padding-top: 8px;
+}
+
+.login-panel {
+  padding: clamp(24px, 5vw, 44px);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  background: rgba(18, 20, 42, 0.68);
+  box-shadow: 0 20px 60px rgba(0, 0, 0, 0.35), inset 0 1px 0 rgba(255, 255, 255, 0.04);
+}
+
+/* Centre the login card in the content area, both axes */
+main.wiki-container:has(.login-panel) {
+  display: grid;
+  place-content: center;
+  place-items: center;
+}
+
+main.wiki-container:has(.login-panel) .login-panel {
+  width: min(100%, 420px);
+  margin: 0;
+}
+
+@media (max-width: 720px) {
+  .is-admin main.wiki-container {
+    padding: 20px 16px;
+  }
+
+  .is-admin .admin-tree-table {
+    border-spacing: 0;
+  }
+
+  .is-admin .admin-tree-table tbody td:first-child,
+  .is-admin .admin-tree-table tbody td:last-child {
+    border-radius: 0;
+    border-left: 0;
+    border-right: 0;
+  }
+}
+
+/* ========== Public image thumbnails / lightbox ========== */
+
+.is-public .wiki-article-content img {
+  width: auto;
+  max-width: min(100%, 480px);
+  max-height: 320px;
+  height: auto;
+  cursor: zoom-in;
+  object-fit: contain;
+  transition: border-color 0.15s ease, box-shadow 0.15s ease, transform 0.15s ease;
+}
+
+.is-public .wiki-article-content img:hover,
+.is-public .wiki-article-content img:focus-visible {
+  border-color: rgba(124, 140, 255, 0.5);
+  box-shadow: 0 14px 34px rgba(0, 0, 0, 0.38), 0 0 18px rgba(124, 140, 255, 0.16);
+  outline: none;
+  transform: translateY(-1px);
+}
+
+body.image-lightbox-open {
+  overflow: hidden;
+}
+
+.image-lightbox {
+  position: fixed;
+  inset: 0;
+  z-index: 1100;
+  display: grid;
+  place-items: center;
+  padding: 24px;
+}
+
+.image-lightbox[hidden] {
+  display: none;
+}
+
+.image-lightbox-backdrop {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  border: 0;
+  border-radius: 0;
+  background: rgba(7, 8, 18, 0.84);
+  cursor: zoom-out;
+  box-shadow: none;
+}
+
+.image-lightbox-backdrop:hover {
+  background: rgba(7, 8, 18, 0.84);
+  border: 0;
+  box-shadow: none;
+}
+
+.image-lightbox-panel {
+  position: relative;
+  z-index: 1;
+  display: grid;
+  justify-items: center;
+  width: min(92vw, 1200px);
+  max-height: calc(100vh - 48px);
+  padding: 12px;
+  border: 1px solid var(--border-strong);
+  border-radius: 16px;
+  background: rgba(18, 20, 42, 0.94);
+  box-shadow: 0 24px 80px rgba(0, 0, 0, 0.6), inset 0 1px 0 rgba(255, 255, 255, 0.06);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+}
+
+.image-lightbox-image {
+  display: block;
+  max-width: 100%;
+  max-height: calc(100vh - 130px);
+  border-radius: 10px;
+  object-fit: contain;
+}
+
+/* Full PDF viewer inside the same lightbox */
+.image-lightbox-frame {
+  display: block;
+  width: min(90vw, 1100px);
+  height: calc(100vh - 130px);
+  border: 0;
+  border-radius: 10px;
+  background: #0a0b16;
+}
+
+.image-lightbox-close {
+  position: absolute;
+  top: 8px;
+  right: 8px;
+  z-index: 1;
+  width: 36px;
+  height: 36px;
+  padding: 0;
+  border-radius: 10px;
+  background: rgba(18, 20, 42, 0.88);
+  color: var(--text);
+  font-size: 1.55rem;
+  line-height: 1;
+}
+
+.image-lightbox-caption {
+  max-width: 100%;
+  margin: 9px 40px 2px;
+  color: var(--muted);
+  font-size: 0.8rem;
+  text-align: center;
+}
+
+@media (max-width: 600px) {
+  .is-public .wiki-article-content img {
+    max-height: 240px;
+  }
+
+  .image-lightbox {
+    padding: 12px;
+  }
+
+  .image-lightbox-panel {
+    width: 96vw;
+    padding: 8px;
+  }
+
+  .image-lightbox-image,
+  .image-lightbox-frame {
+    max-height: calc(100vh - 90px);
+  }
+
+  .image-lightbox-frame {
+    width: 92vw;
+    height: calc(100vh - 90px);
+  }
+}
+
+/* ========== Search results ========== */
+
+/* Standalone article cards (search, 404) get the reading layout's padding,
+   which normally comes from .wiki-reading-layout > .wiki-article */
+.is-public main.wiki-container > .wiki-article {
+  padding: clamp(28px, 4vw, 48px) clamp(24px, 5vw, 64px) 56px;
+}
+
+.search-results {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  max-width: 720px;
+}
+
+.search-results li {
+  padding: 14px 0;
+  border-bottom: 1px solid var(--border);
+}
+
+.search-result-title {
+  font-size: 1.05rem;
+  font-weight: 600;
+}
+
+.search-result-snippet {
+  margin: 0.35rem 0 0;
+  color: var(--muted);
+  font-size: 0.92rem;
+}
+
+/* ========== User management ========== */
+
+.user-search-form {
+  display: flex;
+  gap: 0.5rem;
+  align-items: center;
+  flex-wrap: wrap;
+  margin: 0 0 1.25rem;
+}
+
+.user-search-form input[type="search"] {
+  flex: 1 1 220px;
+  min-width: 0;
+  min-height: 42px;
+  padding: 10px 12px;
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  background-color: rgba(28, 30, 58, 0.72);
+  color: var(--text);
+  font: inherit;
+  -webkit-appearance: none;
+  appearance: none;
+}
+
+.user-search-form input[type="search"]:focus {
+  outline: none;
+  border-color: var(--accent);
+  box-shadow: 0 0 0 2px rgba(124, 140, 255, 0.22);
+}
+
+/* ========== Profile pictures ========== */
+
+.avatar {
+  display: block;
+  width: 100px;
+  height: 100px;
+  flex: 0 0 auto;
+  border-radius: 50%;
+  object-fit: cover;
+  border: 1px solid var(--border-strong);
+  background-color: var(--panel);
+  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.3);
+}
+
+/* Fallback when no picture is set: the first letter of the display name */
+.avatar-initial {
+  display: grid;
+  place-items: center;
+  color: var(--accent);
+  font-weight: 600;
+  font-size: 2.2rem;
+  line-height: 1;
+  background: linear-gradient(160deg, rgba(124, 140, 255, 0.22), rgba(86, 208, 201, 0.12));
+}
+
+.user-cell .avatar-initial {
+  font-size: 0.95rem;
+}
+
+.user-cell {
+  display: flex;
+  align-items: center;
+  gap: 0.6rem;
+}
+
+.article-byline {
+  display: flex;
+  align-items: center;
+  gap: 0.9rem;
+  margin-top: 0.9rem;
+}
+
+.article-byline-text {
+  display: flex;
+  flex-direction: column;
+  gap: 0.15rem;
+  min-width: 0;
+}
+
+.article-byline-name {
+  color: var(--text);
+  font-weight: 600;
+}
+
+.article-byline .meta {
+  margin: 0;
+}
+
+@media (max-width: 600px) {
+  .article-byline .avatar {
+    width: 64px;
+    height: 64px;
+  }
+
+  .article-byline .avatar-initial {
+    font-size: 1.5rem;
+  }
+}
+
+/* ========== Collaborators ========== */
+
+.collaborator-panel {
+  margin-top: 2rem;
+  padding-top: 1.5rem;
+  border-top: 1px solid var(--border);
+}
+
+.collaborator-list {
+  list-style: none;
+  margin: 0 0 1rem;
+  padding: 0.35rem;
+  max-height: 260px;
+  overflow-y: auto;
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  background-color: rgba(10, 11, 22, 0.28);
+}
+
+.collaborator-list li + li {
+  border-top: 1px solid var(--border);
+}
+
+.collaborator-list .checkbox-inline {
+  gap: 0.65rem;
+  margin: 0 !important;
+  padding: 0.5rem 0.6rem;
+}
+
+.collaborator-list .checkbox-inline:hover {
+  background-color: var(--hover);
+  border-radius: 9px;
+}
+
+.collaborator-name {
+  font-weight: 600;
+}
+
+.article-byline-with {
+  color: var(--muted);
+  font-size: 0.9rem;
+}
