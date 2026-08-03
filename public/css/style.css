@@ -2087,19 +2087,31 @@ body.image-lightbox-open {
 .image-lightbox-image {
   display: block;
   max-width: 100%;
-  max-height: calc(100vh - 130px);
+  max-height: calc(100vh - 80px);
   border-radius: 10px;
   object-fit: contain;
 }
 
-/* Full PDF viewer inside the same lightbox */
+/* Full PDF viewer inside the same lightbox.
+   Only force display when visible — otherwise `display: block` overrides the
+   HTML `hidden` attribute and leaves a dark empty box under image previews. */
 .image-lightbox-frame {
-  display: block;
   width: min(90vw, 1100px);
-  height: calc(100vh - 130px);
+  height: calc(100vh - 100px);
   border: 0;
   border-radius: 10px;
   background: #0a0b16;
+}
+
+.image-lightbox-frame:not([hidden]) {
+  display: block;
+}
+
+.image-lightbox-image[hidden],
+.image-lightbox-frame[hidden],
+.image-lightbox-caption[hidden],
+.image-lightbox-caption:empty {
+  display: none !important;
 }
 
 .image-lightbox-close {

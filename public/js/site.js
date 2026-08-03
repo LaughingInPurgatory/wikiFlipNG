@@ -168,7 +168,9 @@
 
     function openOverlay(trigger, label) {
       activeTrigger = trigger;
-      caption.textContent = label || "";
+      var text = (label || "").trim();
+      caption.textContent = text;
+      caption.hidden = !text;
       overlay.hidden = false;
       overlay.setAttribute("aria-hidden", "false");
       document.body.classList.add("image-lightbox-open");
@@ -177,10 +179,13 @@
 
     function openPreview(trigger) {
       frame.hidden = true;
+      frame.removeAttribute("src");
       image.hidden = false;
       image.src = trigger.currentSrc || trigger.src;
       image.alt = trigger.alt || "Expanded image";
-      openOverlay(trigger, trigger.alt || "");
+      panel.setAttribute("aria-label", "Image preview");
+      // Don't show the filename/path as a caption bar under photos.
+      openOverlay(trigger, "");
     }
 
     /** Same overlay, full-size PDF viewer instead of an image. */
