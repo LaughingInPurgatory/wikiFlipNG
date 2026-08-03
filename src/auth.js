@@ -48,7 +48,7 @@ export function verifyPassword(password, stored) {
   return timingSafeEqual(actual, expected);
 }
 
-export const MIN_PASSWORD_LENGTH = 8;
+export const MIN_PASSWORD_LENGTH = 5;
 
 /**
  * Make sure the environment's admin account exists and can log in.

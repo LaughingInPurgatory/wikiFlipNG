@@ -136,7 +136,7 @@ gear button opens login, then either the admin area or your account page.
 | Delete a page | ✓ | ✓ | — |
 | Change collaborators | ✓ | ✓ | — |
 | Reorder pages | ✓ | — | — |
-| Branding and CSS | ✓ | — | — |
+| Branding | ✓ | — | — |
 | Manage users | ✓ | — | — |
 | Own name, password, picture | ✓ | ✓ | ✓ |
 
@@ -162,7 +162,7 @@ before upload. The picture appears in the byline on pages that user created.
 
 ## Backup and restore
 
-Admins get a **Backup** tab at `/admin?tab=backup`:
+Admins get a **Backup/Restore** tab at `/admin?tab=backup`:
 
 - **Export** downloads a `.zip` with a consistent SQLite snapshot of the whole
   site (pages, media, accounts, collaborators, branding).
@@ -193,7 +193,7 @@ PDF viewers again.
 | Variable | Purpose |
 |----------|---------|
 | `WIKIFLIP_ADMIN_USER` | Admin username (default `admin`) |
-| `WIKIFLIP_ADMIN_PASSWORD` | Plain-text password, hashed at boot (min 8 characters) |
+| `WIKIFLIP_ADMIN_PASSWORD` | Plain-text password, hashed at boot (min 5 characters) |
 | `WIKIFLIP_ADMIN_PASSWORD_HASH` | scrypt hash — `npm run hash-password -- 'pw'` |
 | `WIKIFLIP_DB` | Database path (default `./data/wiki.db`, or `/app/data/wiki.db` in Docker) |
 | `PORT` | HTTP port (default `3000`) |

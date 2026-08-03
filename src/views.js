@@ -6,6 +6,7 @@
  * lives in /js/*.js and per-page values arrive via data-* attributes.
  */
 
+import { MIN_PASSWORD_LENGTH } from './auth.js';
 import { escapeHtml as esc, pageUrl } from './markdown.js';
 
 const attr = (name, value) => (value === '' || value === null || value === undefined ? '' : ` ${name}="${esc(value)}"`);
@@ -317,8 +318,8 @@ function passwordFields({ requireCurrent }) {
   </div>` : ''}
   <div class="form-group">
     <label for="new_password">New password</label>
-    <input type="password" id="new_password" name="new_password" autocomplete="new-password" maxlength="200" minlength="8">
-    <small class="hint">Leave empty to keep the current password. Minimum 8 characters.</small>
+    <input type="password" id="new_password" name="new_password" autocomplete="new-password" maxlength="200" minlength="${MIN_PASSWORD_LENGTH}">
+    <small class="hint">Leave empty to keep the current password. Minimum ${MIN_PASSWORD_LENGTH} characters.</small>
   </div>
   ${requireCurrent ? `<div class="form-group">
     <label for="confirm_password">Confirm new password</label>
@@ -483,8 +484,8 @@ function usersPanel({ users, userSearch, currentUser, csrf }) {
       </div>
       <div class="form-group">
         <label for="new_user_password">Password</label>
-        <input type="password" id="new_user_password" name="password" required minlength="8" maxlength="200" autocomplete="new-password">
-        <small class="hint">Minimum 8 characters.</small>
+        <input type="password" id="new_user_password" name="password" required minlength="${MIN_PASSWORD_LENGTH}" maxlength="200" autocomplete="new-password">
+        <small class="hint">Minimum ${MIN_PASSWORD_LENGTH} characters.</small>
       </div>
       <div class="form-group">
         <label>Permissions</label>
@@ -634,8 +635,8 @@ ${adminTreeRows(tree, 0, '', false, csrf, authors, shared)}
   <nav class="admin-tabs" role="tablist" aria-label="Admin sections">
     <a role="tab" class="admin-tab${tab === 'pages' ? ' is-active' : ''}" href="/admin?tab=pages" aria-selected="${tab === 'pages'}" id="tab-pages">Pages &amp; categories</a>
     <a role="tab" class="admin-tab${tab === 'users' ? ' is-active' : ''}" href="/admin?tab=users" aria-selected="${tab === 'users'}" id="tab-users">Users</a>
-    <a role="tab" class="admin-tab${tab === 'branding' ? ' is-active' : ''}" href="/admin?tab=branding" aria-selected="${tab === 'branding'}" id="tab-branding">Branding &amp; CSS</a>
-    <a role="tab" class="admin-tab${tab === 'backup' ? ' is-active' : ''}" href="/admin?tab=backup" aria-selected="${tab === 'backup'}" id="tab-backup">Backup</a>
+    <a role="tab" class="admin-tab${tab === 'branding' ? ' is-active' : ''}" href="/admin?tab=branding" aria-selected="${tab === 'branding'}" id="tab-branding">Branding</a>
+    <a role="tab" class="admin-tab${tab === 'backup' ? ' is-active' : ''}" href="/admin?tab=backup" aria-selected="${tab === 'backup'}" id="tab-backup">Backup/Restore</a>
   </nav>
 
   ${flash ? `<div class="save-status ${flashOk ? 'is-success' : 'is-error'}" role="status">${esc(flash)}</div>` : ''}

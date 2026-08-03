@@ -27,7 +27,7 @@ services:
       - "8080:3000"
     environment:
       WIKIFLIP_ADMIN_USER: admin
-      # WIKIFLIP_ADMIN_PASSWORD: change-me-at-least-8-chars
+      # WIKIFLIP_ADMIN_PASSWORD: change-me-at-least-5-chars
       # WIKIFLIP_ADMIN_PASSWORD_HASH: scrypt$...
       # Behind a TLS proxy, so secure cookies and client IPs work:
       # TRUST_PROXY: "1"
