@@ -66,7 +66,9 @@ Sign in from the gear button at the bottom of the sidebar (`/login`). The
 default username is `admin` unless you set `WIKIFLIP_ADMIN_USER`.
 
 The same compose file works with Dockhand, Portainer, or another stack manager.
-The wiki database lives on the `wiki_data` volume.
+The wiki database is stored on the host under `./data` (bind-mounted to
+`/app/data`). Prefer that over a Docker named volume — on some hosts a fresh
+named volume is root-owned and SQLite fails with `unable to open database file`.
 
 ### If Docker says `unauthorized`
 
@@ -82,15 +84,6 @@ the deployment.
 docker run -d --name wikiflip-ng \
   -p 8080:3000 \
   -e WIKIFLIP_ADMIN_USER=admin \
-  -v wiki_data:/app/data \
-  ghcr.io/laughinginpurgatory/wikiflipng:latest
-```
-
-To keep the database in a folder on the host instead of a named volume:
-
-```bash
-docker run -d --name wikiflip-ng \
-  -p 8080:3000 \
   -v "$(pwd)/data:/app/data" \
   ghcr.io/laughinginpurgatory/wikiflipng:latest
 ```
@@ -103,7 +96,7 @@ To choose your own password instead of a generated one:
 docker run -d --name wikiflip-ng \
   -p 8080:3000 \
   -e WIKIFLIP_ADMIN_PASSWORD='something long' \
-  -v wiki_data:/app/data \
+  -v "$(pwd)/data:/app/data" \
   ghcr.io/laughinginpurgatory/wikiflipng:latest
 ```
 
@@ -248,8 +241,9 @@ Useful Docker commands:
 docker compose pull                # Download the latest published image
 docker compose up -d               # Start the wiki
 docker compose logs -f wiki        # Follow app logs
-docker compose down                # Stop the wiki but keep its volume
-docker run --rm -p 8080:3000 ghcr.io/laughinginpurgatory/wikiflipng:latest
+docker compose down                # Stop the wiki; ./data on the host is kept
+docker run --rm -p 8080:3000 -v "$(pwd)/data:/app/data" \
+  ghcr.io/laughinginpurgatory/wikiflipng:latest
 ```
 
 To build from source instead of pulling:
@@ -258,8 +252,8 @@ To build from source instead of pulling:
 docker compose -f docker-compose.yaml -f docker-compose.build.yaml up -d --build
 ```
 
-Your `wiki_data` volume (or host `data/` folder) is the wiki. Back it up regularly
-before upgrading or removing containers — or use the admin Backup tab.
+Your host `./data` folder is the wiki. Back it up regularly before upgrading or
+removing containers — or use the admin Backup tab.
 
 ## What changed from the PHP WikiFlip
 

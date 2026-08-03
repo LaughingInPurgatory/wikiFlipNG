@@ -14,6 +14,10 @@
 # Pulls the published image by default. To build from this directory instead:
 #
 #   docker compose -f docker-compose.yaml -f docker-compose.build.yaml up -d --build
+#
+# Data is stored on the host at ./data (bind mount). A Docker named volume can
+# leave /app/data root-owned on some hosts so SQLite fails with
+# "unable to open database file" — the bind mount avoids that.
 
 services:
   wiki:
@@ -28,7 +32,10 @@ services:
       # Behind a TLS proxy, so secure cookies and client IPs work:
       # TRUST_PROXY: "1"
     volumes:
-      - wiki_data:/app/data
+      # Host folder — predictable permissions, easy backups
+      - ./data:/app/data
+      # Named volume alternative (entrypoint chowns it; some hosts still misbehave):
+      # - wiki_data:/app/data
     restart: unless-stopped
     read_only: true
     tmpfs:
@@ -36,5 +43,6 @@ services:
     security_opt:
       - no-new-privileges:true
 
-volumes:
-  wiki_data:
+# Uncomment if you switch the mount above to the named volume.
+# volumes:
+#   wiki_data:
