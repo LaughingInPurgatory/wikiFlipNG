@@ -1,6 +1,6 @@
 /**
- * Public chrome: mobile nav, sticky category expand/collapse, page TOC,
- * nav, image lightbox and confirm-before-submit. Loaded on every page.
+ * Public chrome: mobile nav, sticky category expand/collapse,
+ * image lightbox and confirm-before-submit. Loaded on every page.
  */
 (function () {
   "use strict";
