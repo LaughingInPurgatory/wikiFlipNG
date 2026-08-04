@@ -637,6 +637,7 @@ test('backup export/import round-trips pages and accepts classic zip backups', a
   assert.match(tabHtml, /Download backup/);
   assert.match(tabHtml, /admin\/backup\/import/);
   assert.match(tabHtml, /\.zip/);
+  assert.match(tabHtml, /action="\/logout"/, 'admin pages expose log out');
 
   db.deletePage('backup-alpha');
   db.deletePage('imported-guide');

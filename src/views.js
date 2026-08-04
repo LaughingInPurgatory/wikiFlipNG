@@ -12,6 +12,14 @@ import { escapeHtml as esc, pageUrl } from './markdown.js';
 const attr = (name, value) => (value === '' || value === null || value === undefined ? '' : ` ${name}="${esc(value)}"`);
 const stamp = (value) => (value ? String(value).slice(0, 16) : '—');
 
+/** CSRF-backed log out control for admin / account page headers. */
+function logoutButton(csrf) {
+  return `<form method="post" action="/logout" class="inline-form panel-logout-form">
+    <input type="hidden" name="csrf_token" value="${esc(csrf)}">
+    <button type="submit" class="btn btn-ghost">Log out</button>
+  </form>`;
+}
+
 const ICON_GEAR =
   '<svg class="sidenav-icon-svg" viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" ' +
   'stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false">' +
@@ -352,7 +360,10 @@ export function accountView({ user, pages, sharedPages = [], flash, flashOk, csr
   return `<section class="admin-panel card">
   <div class="panel-header">
     <h2>My account</h2>
-    <a class="btn btn-primary" href="/edit">+ New page</a>
+    <div class="panel-header-actions">
+      <a class="btn btn-primary" href="/edit">+ New page</a>
+      ${logoutButton(csrf)}
+    </div>
   </div>
 
   ${flash ? `<div class="save-status ${flashOk ? 'is-success' : 'is-error'}" role="status">${esc(flash)}</div>` : ''}
@@ -629,7 +640,10 @@ ${adminTreeRows(tree, 0, '', false, csrf, authors, shared)}
   return `<section class="admin-panel card">
   <div class="panel-header">
     <h2>Admin</h2>
-    ${tab === 'pages' ? '<a class="btn btn-primary" href="/edit">+ New page</a>' : ''}
+    <div class="panel-header-actions">
+      ${tab === 'pages' ? '<a class="btn btn-primary" href="/edit">+ New page</a>' : ''}
+      ${logoutButton(csrf)}
+    </div>
   </div>
 
   <nav class="admin-tabs" role="tablist" aria-label="Admin sections">
@@ -649,7 +663,10 @@ export function userEditView({ user, pages, isSelf, flash, flashOk, csrf }) {
   return `<section class="admin-panel card">
   <div class="panel-header">
     <h2>${isSelf ? 'My account' : `Edit user: ${esc(user.displayName)}`}</h2>
-    <a class="btn btn-ghost" href="/admin?tab=users">← All users</a>
+    <div class="panel-header-actions">
+      <a class="btn btn-ghost" href="/admin?tab=users">← All users</a>
+      ${logoutButton(csrf)}
+    </div>
   </div>
 
   ${flash ? `<div class="save-status ${flashOk ? 'is-success' : 'is-error'}" role="status">${esc(flash)}</div>` : ''}
