@@ -88,6 +88,8 @@ export function layout(ctx) {
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>${esc(title)}</title>
+<link rel="icon" href="${esc(ctx.logoUrl)}"${ctx.logoMime ? ` type="${esc(ctx.logoMime)}"` : ''} sizes="any">
+<link rel="apple-touch-icon" href="${esc(ctx.logoUrl)}">
 <link rel="stylesheet" href="${esc(ctx.asset('/css/style.css'))}">
 ${ctx.customCssVersion ? `<link rel="stylesheet" href="/site.css?v=${esc(ctx.customCssVersion)}">` : ''}
 ${ctx.loadEditor ? `<link rel="stylesheet" href="/vendor/toastui/toastui-editor.min.css">

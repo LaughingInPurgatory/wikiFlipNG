@@ -213,12 +213,26 @@ function asset(relPath) {
   }
 }
 
+/** Branding logo URL + mime (custom upload, else bundled /logo.png). */
+function brandingLogo() {
+  const name = mediaFilenames(null)[0];
+  if (name) {
+    const media = getMedia('_site', name);
+    return {
+      url: `/media/_site/${encodeURIComponent(name)}`,
+      mime: media?.mime || 'image/png',
+    };
+  }
+  return { url: asset('/logo.png'), mime: 'image/png' };
+}
+
 function siteContext(req) {
-  const logo = mediaFilenames(null)[0];
+  const logo = brandingLogo();
   return {
     asset,
     siteTitle: getSetting('site_title', 'WikiFlip'),
-    logoUrl: logo ? `/media/_site/${encodeURIComponent(logo)}` : '/logo.png',
+    logoUrl: logo.url,
+    logoMime: logo.mime,
     customCssVersion: getSetting('custom_css') ? getSetting('custom_css_version', '1') : null,
     tree: pageTree(),
     user: req.user,
@@ -294,6 +308,25 @@ app.get('/site.css', (req, res) => {
   const css = getSetting('custom_css');
   if (!css) return res.status(404).type('text/plain').send('No custom CSS.');
   res.type('text/css').set('Cache-Control', 'public, max-age=60, must-revalidate').send(css);
+});
+
+/** Favicon = branding logo (custom upload or the default logo.png). */
+app.get(['/favicon.ico', '/favicon'], (req, res) => {
+  const name = mediaFilenames(null)[0];
+  if (name) {
+    const media = getMedia('_site', name);
+    if (media) {
+      return res
+        .status(200)
+        .set({
+          'Content-Type': media.mime,
+          'Content-Length': String(media.bytes.byteLength),
+          'Cache-Control': 'public, max-age=3600, must-revalidate',
+        })
+        .end(Buffer.from(media.bytes));
+    }
+  }
+  res.set('Cache-Control', 'public, max-age=3600, must-revalidate').sendFile(path.join(ROOT, 'public', 'logo.png'));
 });
 
 app.get('/avatar/:username', (req, res) => {
