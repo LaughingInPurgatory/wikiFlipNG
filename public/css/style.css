@@ -497,13 +497,15 @@ main.wiki-container {
 
 .wiki-reading-layout {
   min-height: calc(100vh - var(--inset));
+  width: 100%;
 }
 
 .wiki-reading-layout > .wiki-article {
   min-width: 0;
-  max-width: 920px;
-  margin: 0 auto;
-  padding: clamp(34px, 5vw, 58px) clamp(24px, 6vw, 82px) 68px;
+  width: 100%;
+  max-width: none;
+  margin: 0;
+  padding: clamp(34px, 5vw, 58px) clamp(24px, 5vw, 64px) 68px;
   background: radial-gradient(circle at 78% 0%, rgba(124, 140, 255, 0.07), transparent 34%), rgba(18, 20, 42, 0.7);
 }
 
@@ -529,9 +531,12 @@ main.wiki-container {
 
 .article-header,
 .wiki-article-content,
+.article-byline,
+.article-meta,
 .subpage-list,
 .article-actions {
-  max-width: 720px;
+  width: 100%;
+  max-width: none;
 }
 
 .is-public .article-header h1 {
@@ -544,15 +549,10 @@ main.wiki-container {
   line-height: 1.03;
 }
 
-.is-public .article-header .meta {
-  display: flex;
-  align-items: center;
-  gap: 10px;
-  margin: 18px 0 0;
-  padding: 0 0 24px;
+.is-public .article-header {
+  margin-bottom: 0;
+  padding-bottom: 22px;
   border-bottom: 1px solid var(--border);
-  color: var(--muted);
-  font-size: 0.78rem;
 }
 
 .is-public .breadcrumb {
@@ -2238,7 +2238,17 @@ body.image-lightbox-open {
   display: flex;
   align-items: center;
   gap: 0.9rem;
-  margin-top: 0.9rem;
+  margin: 2rem 0 0;
+  padding-top: 1.25rem;
+  border-top: 1px solid var(--border);
+}
+
+.article-meta {
+  margin: 2rem 0 0;
+  padding-top: 1.25rem;
+  border-top: 1px solid var(--border);
+  color: var(--muted);
+  font-size: 0.78rem;
 }
 
 .article-byline-text {
@@ -2255,6 +2265,8 @@ body.image-lightbox-open {
 
 .article-byline .meta {
   margin: 0;
+  color: var(--muted);
+  font-size: 0.78rem;
 }
 
 @media (max-width: 600px) {

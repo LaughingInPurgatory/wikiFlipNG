@@ -167,11 +167,40 @@ export function avatar(user, { size = 100, className = '' } = {}) {
 }
 
 export function pageView({ page, contentHtml, ancestors, children, siteTitle, canEdit, canCreate, author, collaborators = [] }) {
-  const updated = page.updatedAt ? new Date(`${page.updatedAt.replace(' ', 'T')}Z`) : null;
-  const meta = children.length
-    ? `${children.length} sub-page${children.length === 1 ? '' : 's'}`
-    : updated
-      ? `Updated ${updated.toLocaleString('en-US', { month: 'short', day: 'numeric', year: 'numeric', hour: 'numeric', minute: '2-digit' })}`
+  const fmt = (value) => {
+    if (!value) return '';
+    const date = new Date(`${String(value).replace(' ', 'T')}Z`);
+    if (Number.isNaN(date.getTime())) return '';
+    return date.toLocaleString('en-US', {
+      month: 'short',
+      day: 'numeric',
+      year: 'numeric',
+      hour: 'numeric',
+      minute: '2-digit',
+    });
+  };
+  const createdLabel = fmt(page.createdAt);
+  const updatedLabel = fmt(page.updatedAt);
+  const metaBits = [];
+  if (children.length) {
+    metaBits.push(`${children.length} sub-page${children.length === 1 ? '' : 's'}`);
+  }
+  if (createdLabel) metaBits.push(`Created ${createdLabel}`);
+  if (updatedLabel && updatedLabel !== createdLabel) metaBits.push(`Updated ${updatedLabel}`);
+  else if (updatedLabel && !createdLabel) metaBits.push(`Updated ${updatedLabel}`);
+  const meta = metaBits.join(' · ');
+
+  const byline = author
+    ? `<footer class="article-byline">
+        ${avatar(author)}
+        <div class="article-byline-text">
+          <span class="article-byline-name">${esc(author.displayName)}</span>
+          ${collaborators.length ? `<span class="article-byline-with">with ${collaborators.map((c) => esc(c.displayName)).join(', ')}</span>` : ''}
+          ${meta ? `<span class="meta">${esc(meta)}</span>` : ''}
+        </div>
+      </footer>`
+    : meta
+      ? `<p class="article-meta meta">${esc(meta)}</p>`
       : '';
 
   return `<div class="wiki-reading-layout">
@@ -184,19 +213,13 @@ export function pageView({ page, contentHtml, ancestors, children, siteTitle, ca
     <header class="article-header">
       <div class="article-kicker"><span aria-hidden="true"></span>${esc(siteTitle)} guide</div>
       <h1>${esc(page.title)}</h1>
-      ${author ? `<div class="article-byline">
-        ${avatar(author)}
-        <div class="article-byline-text">
-          <span class="article-byline-name">${esc(author.displayName)}</span>
-          ${collaborators.length ? `<span class="article-byline-with">with ${collaborators.map((c) => esc(c.displayName)).join(', ')}</span>` : ''}
-          ${meta ? `<span class="meta">${esc(meta)}</span>` : ''}
-        </div>
-      </div>` : meta ? `<p class="meta">${esc(meta)}</p>` : ''}
     </header>
 
     <div class="wiki-article-content">
 ${contentHtml}
     </div>
+
+    ${byline}
 
     ${children.length ? `<section class="subpage-list" aria-label="Sub-pages">
       <h2>In this section</h2>
