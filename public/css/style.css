@@ -496,13 +496,13 @@ main.wiki-container {
 }
 
 .wiki-reading-layout {
-  display: grid;
-  grid-template-columns: minmax(0, 1fr) 208px;
   min-height: calc(100vh - var(--inset));
 }
 
 .wiki-reading-layout > .wiki-article {
   min-width: 0;
+  max-width: 920px;
+  margin: 0 auto;
   padding: clamp(34px, 5vw, 58px) clamp(24px, 6vw, 82px) 68px;
   background: radial-gradient(circle at 78% 0%, rgba(124, 140, 255, 0.07), transparent 34%), rgba(18, 20, 42, 0.7);
 }
@@ -670,59 +670,6 @@ main.wiki-container {
   flex-wrap: wrap;
   gap: 9px;
   margin-top: 40px;
-}
-
-.page-toc {
-  padding: 51px 20px 20px;
-  border-left: 1px solid var(--border);
-  background: rgba(18, 20, 42, 0.48);
-  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.025);
-  color: var(--muted);
-}
-
-.page-toc[hidden] {
-  display: none;
-}
-
-.page-toc-label {
-  margin-bottom: 13px;
-  color: var(--muted);
-  font-size: 0.68rem;
-  font-weight: 600;
-  letter-spacing: 0.12em;
-  text-transform: uppercase;
-}
-
-.page-toc-links a {
-  display: block;
-  padding: 6px 0 6px 12px;
-  border-left: 1px solid transparent;
-  color: var(--muted);
-  font-size: 0.78rem;
-}
-
-.page-toc-links a.is-nested {
-  padding-left: 22px;
-  font-size: 0.74rem;
-}
-
-.page-toc-links a:first-child {
-  border-left-color: var(--accent);
-  color: var(--text);
-}
-
-.page-toc-links a:hover {
-  color: var(--accent);
-}
-
-@media (max-width: 1060px) {
-  .wiki-reading-layout {
-    grid-template-columns: minmax(0, 1fr);
-  }
-
-  .page-toc {
-    display: none;
-  }
 }
 
 @media (max-width: 740px) {

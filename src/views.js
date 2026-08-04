@@ -210,11 +210,6 @@ ${contentHtml}
       ${canCreate ? `<a class="btn btn-ghost" href="/edit?parent=${encodeURIComponent(page.slug)}">+ Sub-page</a>` : ''}
     </p>` : ''}
   </article>
-
-  <aside class="page-toc" aria-label="On this page" hidden>
-    <div class="page-toc-label">On this page</div>
-    <nav class="page-toc-links"></nav>
-  </aside>
 </div>`;
 }
 
