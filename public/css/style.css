@@ -1029,22 +1029,25 @@ main.wiki-container {
 /* Admin tabs (Pages | Branding) */
 .admin-tabs {
   display: flex;
+  flex-wrap: nowrap;
+  align-items: stretch;
   gap: 0.35rem;
   margin: -0.25rem 0 1.35rem;
   padding: 0.3rem;
   border-radius: 14px;
   border: 1px solid var(--border);
   background: rgba(0, 0, 0, 0.18);
-  flex-wrap: wrap;
+  width: 100%;
+  max-width: 100%;
 }
 
 .admin-tab {
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  flex: 1 1 auto;
-  min-width: 8rem;
-  padding: 0.55rem 1rem;
+  flex: 1 1 0;
+  min-width: 0;
+  padding: 0.55rem 0.85rem;
   border-radius: 10px;
   border: 1px solid transparent;
   color: var(--muted) !important;
@@ -1052,7 +1055,20 @@ main.wiki-container {
   font-weight: 600;
   font-size: 0.92rem;
   letter-spacing: 0.01em;
+  white-space: nowrap;
   transition: background-color 0.15s ease, border-color 0.15s ease, color 0.15s ease, box-shadow 0.15s ease;
+}
+
+/* Only wrap when the bar truly cannot fit one line */
+@media (max-width: 560px) {
+  .admin-tabs {
+    flex-wrap: wrap;
+  }
+
+  .admin-tab {
+    flex: 1 1 calc(50% - 0.35rem);
+    min-width: calc(50% - 0.35rem);
+  }
 }
 
 .admin-tab:hover {
@@ -1824,7 +1840,8 @@ button[type="submit"].link-danger:hover,
 }
 
 .is-admin .admin-tabs {
-  max-width: 520px;
+  /* Stay full-width of the admin card so Branding + Backup/Restore sit side by side */
+  max-width: none;
   margin-bottom: 24px;
   background: rgba(10, 11, 22, 0.28);
 }
