@@ -219,8 +219,6 @@ export function pageView({ page, contentHtml, ancestors, children, siteTitle, ca
 ${contentHtml}
     </div>
 
-    ${byline}
-
     ${children.length ? `<section class="subpage-list" aria-label="Sub-pages">
       <h2>In this section</h2>
       <ul>
@@ -232,6 +230,8 @@ ${contentHtml}
       ${canEdit ? `<a class="btn btn-primary" href="/edit/${esc(page.slug)}">Edit page</a>` : ''}
       ${canCreate ? `<a class="btn btn-ghost" href="/edit?parent=${encodeURIComponent(page.slug)}">+ Sub-page</a>` : ''}
     </p>` : ''}
+
+    ${byline}
   </article>
 </div>`;
 }
